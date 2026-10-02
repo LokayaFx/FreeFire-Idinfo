@@ -40,10 +40,6 @@ body{font-family:'Inter',sans-serif;color:var(--ink);min-height:100vh;background
   background:linear-gradient(135deg,var(--blue),var(--sky));box-shadow:0 8px 18px rgba(37,99,235,.35);
   display:flex;align-items:center;gap:8px}
 #go:disabled{opacity:.6;cursor:wait}
-.tries{display:flex;gap:8px;align-items:center;margin-top:12px;font-size:.8rem;color:var(--mut);flex-wrap:wrap}
-.tries button{border:1px solid var(--stroke);background:rgba(255,255,255,.8);border-radius:999px;
-  padding:5px 14px;font-size:.78rem;font-weight:600;color:var(--blue);cursor:pointer}
-.tries button:hover{background:#dbeafe}
 
 .err{padding:14px 18px;color:#b91c1c;background:rgba(254,226,226,.75);font-size:.9rem;margin-bottom:16px}
 .empty{text-align:center;padding:56px 20px;color:var(--mut)}

@@ -137,8 +137,6 @@ function reset() {
 
 document.addEventListener('DOMContentLoaded', () => {
   $('frm').addEventListener('submit', (e) => { e.preventDefault(); search($('uid').value); });
-  document.querySelectorAll('.tries button').forEach((b) =>
-    b.addEventListener('click', () => { $('uid').value = b.dataset.uid; search(b.dataset.uid); }));
   $('again').addEventListener('click', reset);
   $('rawToggle').addEventListener('click', () => { $('raw').hidden = !$('raw').hidden; });
 });
