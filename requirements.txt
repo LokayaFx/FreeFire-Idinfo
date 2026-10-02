@@ -1,0 +1,9 @@
+Flask>=3.0,<4
+Werkzeug>=3.0,<4
+httpx==0.27.0
+flask-cors>=4,<7
+cachetools>=5.3,<7
+pycryptodome==3.20.0
+protobuf==6.30.0
+Pillow>=10.4,<13
+texture2ddecoder==1.0.6
