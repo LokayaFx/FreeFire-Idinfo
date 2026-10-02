@@ -1,192 +1,117 @@
-> **OB55 / v2.2.0:** Active service credentials are bundled in `accounts.txt` using `UID PASSWORD REGION` rows. The owner explicitly approved public distribution of the new BR/VN test-account pairs. No local DPAPI file is required for a fresh checkout.
-> Local Windows startup: `pwsh -NoProfile -File tools/start-local.ps1` (http://127.0.0.1:5055/).
-> Full API reference: [API_DOCS.md](API_DOCS.md)
+# Lokaya_API — Free Fire Player Lookup
 
-# Lokaya_API — Free Fire Player Info (v2.2.0)
-
-[![Version](https://img.shields.io/badge/version-2.2.0-blue.svg)]
+[![Version](https://img.shields.io/badge/version-2.2.0-blue.svg)](API_DOCS.md)
 [![Python](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/)
+[![Flask](https://img.shields.io/badge/flask-3.x-lightgrey.svg)](https://flask.palletsprojects.com/)
 
-A Flask-based Free Fire player information API and web application. This project generates dynamic player profile banners and avatars directly from official Garena Free Fire CDN assets (`bannerId` and `headPic`) with full Unicode character support and server-side image processing.
+A Flask-based Free Fire player lookup API + web app. Enter any player UID to get
+live profile stats, ranks, guild info and official profile media (banner/avatar
+rendered server-side from Garena CDN assets). The backend is CORS-enabled, so it
+can also serve as the API for a separate multi-tool frontend.
 
-**Developer:** Lokaya_API
-
----
-
-## Key Features
-
-- **Official Garena CDN Integration**: Automatically downloads numeric ASTC item textures from official Garena CDNs (`dl-tata.freefireind.in` & `dl.tata.freefiremobile.com`).
-- **Native ASTC Texture Decoder**: Server-side decoding of 2D ASTC textures using `texture2ddecoder` and Pillow, rendering high-definition, upright WebP banners and avatars.
-- **Full Unicode Character Fallback**: Comprehensive character-level font stack fallback (`NotoSans`, `NotoSansCherokee`, `NotoSansSC`, `NotoSansMath`, `NotoSansSymbols`, `Microsoft Himalaya`, `Segoe UI Symbol`) renders all Free Fire nicknames containing Cherokee, CJK, Tibetan, Math symbols, and special characters cleanly without missing glyph boxes (`🗙`).
-- **Gameskinbo-Style Clean Layout**: 4:1 aspect ratio profile card with a 3px solid white square avatar border, unblurred background graphics, and clean text layout (`Lvl. XX`).
-- **Multi-Region Support**: Full support for `BD`, `IND`, `SG`, `VN`, `TH`, `BR`, `US`, `NA`, `SAC`, `ID`, `RU`, `TW`, `ME`, `PK`, `CIS`, `EUROPE`.
+Full API reference: **[API_DOCS.md](API_DOCS.md)**
 
 ---
 
-## Requirements & System Dependencies
+## Features
 
-### System Requirements
-- **Python**: `3.10` or higher (`3.10`, `3.11`, `3.12`, `3.14`)
-- **OS**: Windows, Linux, or macOS
-
-### Python Dependencies (`requirements.txt`)
-
-| Package | Version | Purpose |
-|---|---|---|
-| `Flask` | `>=3.0.0` | Web framework and routing |
-| `flask-cors` | `>=4.0.0` | Cross-Origin Resource Sharing (CORS) |
-| `httpx` | `>=0.27.0` | Async & sync HTTP client for API & Garena CDN requests |
-| `Pillow` | `>=10.0.0` | Server-side image processing and WebP compositing |
-| `texture2ddecoder` | `>=1.0.0` | Native decoder for Free Fire 2D ASTC textures |
-| `protobuf` | `>=4.25.0` | Protobuf serialization & deserialization |
-| `pycryptodome` | `>=3.20.0` | AES-CBC encryption/decryption for Garena protocols |
-| `cachetools` | `>=5.3.0` | In-memory TTL caching for accounts & rendered WebP media |
+- **Live player lookup** — nickname, level, EXP, likes, region, ranks, guild, pet, loadout and more.
+- **Official profile media** — banner/avatar WebP images composited server-side from official Garena CDN textures, with automatic local fallback.
+- **Glassmorphism web UI** — clean white frosted-glass interface with copyable raw JSON output.
+- **Multi-region support** — `BD IND SG VN TH BR US NA SAC ID RU TW ME PK CIS EUROPE` (explicit `region` optional; auto-detects when omitted).
+- **Backend-ready** — CORS enabled; `/player-info` and media endpoints can be called directly from any frontend.
 
 ---
 
-## Getting Started
+## Quickstart
 
-### Clone the Repository
-
-To clone the repository, run the following command:
+**Requirements:** Python `3.10`+ on Windows, Linux or macOS.
 
 ```bash
-git clone <your-repo-url>
-cd FreeFireInfoSite
-```
-
-### Deploy via Vercel
-
-Deploy this project from your own repository using Vercel.
-
----
-
-## Installation & Local Setup
-
-```bash
-# Create a virtual environment
+# 1. Create a virtual environment
 python -m venv .venv
 ```
 
 **Windows (PowerShell):**
+
 ```powershell
 .\.venv\Scripts\python.exe -m pip install -r requirements.txt
 .\.venv\Scripts\python.exe -m flask --app app run --host 127.0.0.1 --port 5055 --no-debugger --no-reload
 ```
 
 **Linux / macOS:**
+
 ```bash
 source .venv/bin/activate
 pip install -r requirements.txt
 python -m flask --app app run --host 127.0.0.1 --port 5055 --no-debugger --no-reload
 ```
 
-Open your browser at `http://127.0.0.1:5055`. The seven active account groups are in `accounts.txt`.
+Shortcut on Windows:
+
+```powershell
+pwsh -NoProfile -File tools/start-local.ps1
+```
+
+Open `http://127.0.0.1:5055` and search any player UID.
 
 ---
 
-## API Endpoints & Documentation
-
-### 1. Player Info JSON Endpoint
+## API (summary)
 
 ```http
-GET /player-info?region=BD&uid=4422076728
+GET /player-info?uid={uid}&region={region}
+GET /api/banner/banner_{uid}.webp?region={region}
+GET /api/avatar/avatar_{uid}.webp?region={region}
+GET /refresh          # refresh all regional gateway tokens
 ```
 
-#### Example JSON Response
+```js
+const data = await (await fetch('http://127.0.0.1:5055/player-info?uid=4422076728')).json();
+console.log(data.basicInfo.nickname, data.mediaInfo.bannerUrl);
+```
 
-```json
-{
-  "basicInfo": {
-    "accountId": "4422076728",
-    "nickname": "ᴛᴀʙᴀssᴜᴍ♡ʀ",
-    "level": 67,
-    "liked": 9196,
-    "region": "BD",
-    "createAt": "1637316422",
-    "lastLoginAt": "1784889557",
-    "rank": 313,
-    "rankingPoints": 2348,
-    "csRank": 324,
-    "csRankingPoints": 223,
-    "badgeCnt": 87,
-    "headPic": 902050009,
-    "bannerId": 901000116,
-    "badgeId": 1001000098,
-    "pinId": 910031004,
-    "releaseVersion": "OB54",
-    "seasonId": 52,
-    "showBrRank": true,
-    "showCsRank": true,
-    "title": 904090024,
-    "exp": 2121988
-  },
-  "clanBasicInfo": {
-    "clanId": "3015421980",
-    "clanName": "CRMNAL  SLDRS",
-    "clanLevel": 5,
-    "memberNum": 45,
-    "capacity": 50
-  },
-  "captainBasicInfo": {
-    "accountId": "4641089868",
-    "nickname": "MR.REFAT",
-    "level": 65
-  },
-  "socialInfo": {
-    "signature": "Welcome to my profile!",
-    "language": "English",
-    "gender": "Female"
-  },
-  "mediaInfo": {
-    "bannerUrl": "/api/banner/banner_4422076728.webp?region=BD&v=v7-901000116-902050009-1784900505",
-    "avatarUrl": "/api/avatar/avatar_4422076728.webp?region=BD&v=v7-901000116-902050009-1784900505",
-    "policy": "official-free-fire-cdn-only-with-local-fallback"
-  }
-}
+Parameters, response schema, error codes and media headers are documented in
+**[API_DOCS.md](API_DOCS.md)**.
+
+---
+
+## Project structure
+
+```text
+app.py             # Flask app, routes, token management
+credentials.py     # service-account resolution (accounts.txt + env overrides)
+protocol.py        # OB protocol profiles, headers, login decoding
+official_media.py  # CDN media rendering (ASTC -> WebP)
+proto/             # protobuf message definitions
+templates/         # web UI (glassmorphism)
+static/            # web UI styles + frontend JS
+fonts/             # nickname rendering fonts (required, do not delete)
+accounts.txt       # active service accounts (UID PASSWORD REGION rows)
+tools/             # local runner + live diagnostics
+vercel.json        # Vercel deployment config
+API_DOCS.md        # full API reference
 ```
 
 ---
 
-### 2. Dynamic WebP Media Endpoints
+## Configuration
 
-```http
-GET /api/banner/banner_<UID>.webp?region=<REGION>
-GET /api/avatar/avatar_<UID>.webp?region=<REGION>
-```
-
-#### Local URLs Example
-
-```text
-http://127.0.0.1:5055/api/banner/banner_4422076728.webp?region=BD
-http://127.0.0.1:5055/api/avatar/avatar_4422076728.webp?region=BD
-```
+Service accounts live in `accounts.txt` (one `UID PASSWORD REGION` row per scope).
+Optional environment overrides: `FREEFIRE_<SCOPE>_UID` + `FREEFIRE_<SCOPE>_PASSWORD`
+where `SCOPE` is a region (`BR`, `VN`, …) or a group (`AMERICAS`, `GLOBAL`).
+Restart the server after changing credentials so cached tokens are cleared.
+See [API_DOCS.md](API_DOCS.md) for the full account guide.
 
 ---
 
-## Asset Security Policy
+## Developer
 
-`official_media.py` does not accept arbitrary remote URLs. It constructs paths strictly from validated numeric Free Fire item IDs and restricts HTTPS downloads to allowlisted Garena CDN hosts:
-
-```text
-dl-tata.freefireind.in
-dl.tata.freefiremobile.com
-```
-
-Asset path template:
-
-```text
-/live/ABHotUpdates/IconCDN/android/<ITEM_ID>_rgb.astc
-```
-
----
-
-## Developer & Credits
-
-- **Developer:** Lokaya_API
+- **LokayaGfx** — *Lokaya_API*
 
 ---
 
 ## Disclaimer
 
-This is an unofficial community project and is not affiliated with or endorsed by Garena. Use in accordance with Garena/Free Fire terms of service and local privacy regulations.
+Unofficial community project. Not affiliated with or endorsed by Garena.
+Use in accordance with Garena / Free Fire terms of service and local privacy regulations.
