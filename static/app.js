@@ -1,6 +1,7 @@
 /* Lokaya_API frontend — talks to: GET /player-info, banner/avatar .webp, /refresh */
 const $ = (id) => document.getElementById(id);
-const state = { mediaUrl: null, seq: 0 };
+const state = { mediaUrl: null, bannerUrl: null, avatarUrl: null, uid: null, seq: 0 };
+const HIST_KEY = 'lokaya_hist';
 
 const REGIONS = { BD:'Bangladesh', SG:'Singapore', VN:'Vietnam', IND:'India', BR:'Brazil',
   US:'United States', NA:'North America', SAC:'South America', ID:'Indonesia', RU:'Russia',
@@ -79,9 +80,14 @@ async function search(uid) {
     set('pName', b.nickname || 'N/A');
     set('pLvl', b.level); $('pLikes').textContent = fmtInt(b.liked);
     set('pRegion', regionName(region)); set('pSince', fmtDate(b.createAt));
+    set('pCredit', cr.creditScore);
+    set('pDiamonds', dia.diamondCost !== undefined ? fmtInt(dia.diamondCost) : 'N/A');
 
     const bu = (d.mediaInfo && d.mediaInfo.bannerUrl) ||
       `/api/banner/banner_${encodeURIComponent(uid)}.webp?region=${encodeURIComponent(region)}`;
+    const au = (d.mediaInfo && d.mediaInfo.avatarUrl) ||
+      `/api/avatar/avatar_${encodeURIComponent(uid)}.webp?region=${encodeURIComponent(region)}`;
+    state.bannerUrl = bu; state.avatarUrl = au; state.uid = uid;
     loadBanner(bu, seq);
 
     set('cUid', b.accountId || uid); set('cName', b.nickname);
@@ -91,9 +97,10 @@ async function search(uid) {
     set('cMode', cleanEnum(s.modePrefer)); set('cBio', (s.signature || 'N/A'));
 
     $('rBr').textContent = fmtInt(b.rankingPoints);
+    set('rBrRank', b.rank);
     set('rBrMax', b.maxRank); $('rCs').textContent = fmtInt(b.csRankingPoints);
     set('rCsRank', b.csRank); set('rCsMax', b.csMaxRank);
-    set('rSeason', b.seasonId); set('rCreated', fmtDateTime(b.createAt)); set('rLogin', fmtDateTime(b.lastLoginAt));
+    set('rSeason', b.seasonId); set('rVer', b.releaseVersion); set('rCreated', fmtDateTime(b.createAt)); set('rLogin', fmtDateTime(b.lastLoginAt));
 
     set('lAvatar', b.headPic); set('lBanner', b.bannerId);
     set('lChar', prof.avatarId); set('lAwake', prof.isSelectedAwaken ? 'Yes' : 'No');
@@ -115,6 +122,7 @@ async function search(uid) {
 
     $('rawBody').textContent = JSON.stringify(d, null, 2);
     $('raw').hidden = true;
+    pushHistory(uid);
 
     $('empty').style.display = 'none';
     $('out').hidden = false;
@@ -129,16 +137,65 @@ async function search(uid) {
 function reset() {
   state.seq++;
   if (state.mediaUrl) { URL.revokeObjectURL(state.mediaUrl); state.mediaUrl = null; }
+  state.bannerUrl = state.avatarUrl = state.uid = null;
   $('uid').value = ''; $('pBanner').removeAttribute('src');
   $('out').hidden = true; $('raw').hidden = true;
   clearError(); $('empty').style.display = 'block';
   $('uid').focus();
 }
 
+async function downloadMedia(kind) {
+  const url = kind === 'avatar' ? state.avatarUrl : (state.mediaUrl || state.bannerUrl);
+  if (!url) return;
+  const name = `${kind}_${state.uid || 'player'}.webp`;
+  try {
+    const r = await fetch(url);
+    if (!r.ok) throw new Error('fetch failed');
+    const blob = await r.blob();
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = name;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 4000);
+  } catch {
+    window.open(url, '_blank');
+  }
+}
+
+function getHistory() {
+  try { return JSON.parse(localStorage.getItem(HIST_KEY) || '[]'); }
+  catch { return []; }
+}
+function pushHistory(uid) {
+  const h = [uid, ...getHistory().filter((x) => x !== uid)].slice(0, 8);
+  try { localStorage.setItem(HIST_KEY, JSON.stringify(h)); } catch {}
+  renderHistory();
+}
+function renderHistory() {
+  const h = getHistory(), box = $('hist'), chips = $('histChips');
+  chips.innerHTML = '';
+  if (!h.length) { box.hidden = true; return; }
+  box.hidden = false;
+  h.forEach((u) => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.textContent = u;
+    b.addEventListener('click', () => { $('uid').value = u; search(u); });
+    chips.appendChild(b);
+  });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   $('frm').addEventListener('submit', (e) => { e.preventDefault(); search($('uid').value); });
   $('again').addEventListener('click', reset);
+  $('dlBanner').addEventListener('click', () => downloadMedia('banner'));
+  $('dlAvatar').addEventListener('click', () => downloadMedia('avatar'));
   $('rawToggle').addEventListener('click', () => { $('raw').hidden = !$('raw').hidden; });
+  $('histClear').addEventListener('click', () => {
+    try { localStorage.removeItem(HIST_KEY); } catch {}
+    renderHistory();
+  });
+  renderHistory();
   $('rawCopy').addEventListener('click', async () => {
     const txt = $('rawBody').textContent || '{}';
     const label = $('rawCopyTxt');

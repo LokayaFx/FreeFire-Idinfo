@@ -33,6 +33,11 @@
         <button id="go" type="submit"><i class="fa-solid fa-magnifying-glass"></i><span id="goTxt">Search</span></button>
       </div>
     </form>
+    <div id="hist" class="hist" hidden>
+      <span>Recent</span>
+      <div id="histChips" class="hist-chips"></div>
+      <button type="button" id="histClear" title="Clear history"><i class="fa-solid fa-xmark"></i></button>
+    </div>
   </section>
 
   <div id="err" class="glass err" hidden></div>
@@ -52,11 +57,17 @@
           <span class="pill">Lv <b id="pLvl">—</b></span>
           <span class="pill"><i class="fa-solid fa-heart"></i> <b id="pLikes">—</b></span>
           <span class="pill" id="pRegion">—</span>
+          <span class="pill"><i class="fa-solid fa-star"></i> <b id="pCredit">—</b></span>
+          <span class="pill"><i class="fa-solid fa-gem"></i> <b id="pDiamonds">—</b></span>
         </div>
         <div class="opened"><i class="fa-regular fa-calendar-check"></i> ID opened · <span id="pSince">—</span></div>
       </div>
       <div class="banner"><img id="pBanner" alt="player banner"></div>
       <div id="src" class="src">Official media loads after lookup</div>
+      <div class="dl-row">
+        <button type="button" id="dlBanner"><i class="fa-solid fa-download"></i>Banner</button>
+        <button type="button" id="dlAvatar"><i class="fa-solid fa-download"></i>Avatar</button>
+      </div>
     </div>
 
     <div class="grid">
@@ -79,11 +90,13 @@
         <h3><i class="fa-solid fa-trophy"></i>Ranks</h3>
         <dl>
           <div><dt>BR points</dt><dd id="rBr">—</dd></div>
+          <div><dt>BR rank</dt><dd id="rBrRank">—</dd></div>
           <div><dt>BR max rank</dt><dd id="rBrMax">—</dd></div>
           <div><dt>CS points</dt><dd id="rCs">—</dd></div>
           <div><dt>CS rank</dt><dd id="rCsRank">—</dd></div>
           <div><dt>CS max rank</dt><dd id="rCsMax">—</dd></div>
           <div><dt>Season</dt><dd id="rSeason">—</dd></div>
+          <div><dt>Version</dt><dd id="rVer">—</dd></div>
           <div><dt>Created</dt><dd id="rCreated">—</dd></div>
           <div><dt>Last login</dt><dd id="rLogin">—</dd></div>
         </dl>
