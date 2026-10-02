@@ -1,19 +1,16 @@
 > **OB55 / v2.2.0:** Active service credentials are bundled in `accounts.txt` using `UID PASSWORD REGION` rows. The owner explicitly approved public distribution of the new BR/VN test-account pairs. No local DPAPI file is required for a fresh checkout.
 > Run `python -m pip install -r requirements-dev.txt`, then `python -m pytest -q`.
 > Local Windows startup: `pwsh -NoProfile -File tools/start-local.ps1` (http://127.0.0.1:5055/).
-> [Account configuration](docs/ACCOUNT_CONFIGURATION.md) | [OB troubleshooting](docs/OB_UPDATE_GUIDE.md) | [Research](docs/OB55_RESEARCH_2026-09-27.md)
+> Full guide: [DOCS.md](DOCS.md)
 
-# Free Fire Info Site — Official Dynamic Media Edition (v2.2.0)
+# Lokaya_API — Free Fire Player Info (v2.2.0)
 
-[![Version](https://img.shields.io/badge/version-2.2.0-orange.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-2.2.0-blue.svg)]
 [![Python](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/)
-[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
-[![Deploy to Vercel](https://vercel.com/button)](https://vercel.com/import/project?template=https://github.com/refatbd/FreeFireInfoSite)
 
 A Flask-based Free Fire player information API and web application. This project generates dynamic player profile banners and avatars directly from official Garena Free Fire CDN assets (`bannerId` and `headPic`) with full Unicode character support and server-side image processing.
 
-**Developer:** [refatbd](https://github.com/refatbd)  
-**GitHub Repository:** [https://github.com/refatbd/FreeFireInfoSite](https://github.com/refatbd/FreeFireInfoSite)
+**Developer:** Lokaya_API
 
 ---
 
@@ -55,15 +52,13 @@ A Flask-based Free Fire player information API and web application. This project
 To clone the repository, run the following command:
 
 ```bash
-git clone https://github.com/refatbd/FreeFireInfoSite.git
+git clone <your-repo-url>
 cd FreeFireInfoSite
 ```
 
 ### Deploy via Vercel
 
-You can deploy the project using the button below:
-
-[![Deploy to Vercel](https://vercel.com/button)](https://vercel.com/import/project?template=https://github.com/refatbd/FreeFireInfoSite)
+Deploy this project from your own repository using Vercel.
 
 ---
 
@@ -87,7 +82,7 @@ pip install -r requirements.txt
 python -m flask --app app run --host 127.0.0.1 --port 5055 --no-debugger --no-reload
 ```
 
-Open your browser at `http://127.0.0.1:5055`. The seven active account groups are in `accounts.txt`; the unscoped, unverified historical inventory is in `accounts-legacy.txt` and is never loaded. See [account configuration](docs/ACCOUNT_CONFIGURATION.md) to replace a shared account.
+Open your browser at `http://127.0.0.1:5055`. The seven active account groups are in `accounts.txt`.
 
 ---
 
@@ -199,8 +194,7 @@ python -m pytest
 
 ## Developer & Credits
 
-- **Developer:** [refatbd](https://github.com/refatbd)
-- **GitHub Repository:** [https://github.com/refatbd/FreeFireInfoSite](https://github.com/refatbd/FreeFireInfoSite)
+- **Developer:** Lokaya_API
 
 ---
 
