@@ -77,6 +77,8 @@ body{font-family:'Inter',sans-serif;color:var(--ink);min-height:100vh;background
 #again{border:2px solid var(--blue);background:#fff;color:var(--blue)}
 #again:hover{background:var(--blue);color:#fff}
 #rawToggle{border:none;background:linear-gradient(135deg,var(--blue),var(--sky));color:#fff}
+#rawCopy{border:2px solid var(--blue);background:#fff;color:var(--blue)}
+#rawCopy:hover{background:var(--blue);color:#fff}
 #raw{margin-top:12px;background:#0b1e3a;color:#7dd3fc;border-radius:12px;padding:14px;
   font-size:.75rem;max-height:380px;overflow:auto;white-space:pre-wrap;word-break:break-all}
 

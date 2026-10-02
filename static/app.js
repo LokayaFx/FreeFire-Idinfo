@@ -139,4 +139,24 @@ document.addEventListener('DOMContentLoaded', () => {
   $('frm').addEventListener('submit', (e) => { e.preventDefault(); search($('uid').value); });
   $('again').addEventListener('click', reset);
   $('rawToggle').addEventListener('click', () => { $('raw').hidden = !$('raw').hidden; });
+  $('rawCopy').addEventListener('click', async () => {
+    const txt = $('rawBody').textContent || '{}';
+    const label = $('rawCopyTxt');
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(txt);
+      } else {
+        const ta = document.createElement('textarea');
+        ta.value = txt;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        ta.remove();
+      }
+      label.textContent = 'Copied!';
+    } catch {
+      label.textContent = 'Copy failed';
+    }
+    setTimeout(() => { label.textContent = 'Copy JSON'; }, 1500);
+  });
 });
