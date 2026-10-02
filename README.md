@@ -1,5 +1,4 @@
 > **OB55 / v2.2.0:** Active service credentials are bundled in `accounts.txt` using `UID PASSWORD REGION` rows. The owner explicitly approved public distribution of the new BR/VN test-account pairs. No local DPAPI file is required for a fresh checkout.
-> Run `python -m pip install -r requirements-dev.txt`, then `python -m pytest -q`.
 > Local Windows startup: `pwsh -NoProfile -File tools/start-local.ps1` (http://127.0.0.1:5055/).
 > Full API reference: [API_DOCS.md](API_DOCS.md)
 
@@ -178,16 +177,6 @@ Asset path template:
 
 ```text
 /live/ABHotUpdates/IconCDN/android/<ITEM_ID>_rgb.astc
-```
-
----
-
-## Testing
-
-Run the unit test suite:
-
-```bash
-python -m pytest
 ```
 
 ---
