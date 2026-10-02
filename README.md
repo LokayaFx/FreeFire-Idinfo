@@ -1,8 +1,7 @@
 > **OB55 / v2.2.0:** Active service credentials are bundled in `accounts.txt` using `UID PASSWORD REGION` rows. The owner explicitly approved public distribution of the new BR/VN test-account pairs. No local DPAPI file is required for a fresh checkout.
 > Run `python -m pip install -r requirements-dev.txt`, then `python -m pytest -q`.
 > Local Windows startup: `pwsh -NoProfile -File tools/start-local.ps1` (http://127.0.0.1:5055/).
-> Full guide: [DOCS.md](DOCS.md)
-> [Account configuration](docs/ACCOUNT_CONFIGURATION.md) | [OB troubleshooting](docs/OB_UPDATE_GUIDE.md) | [Research](docs/OB55_RESEARCH_2026-09-27.md)
+> Full API reference: [API_DOCS.md](API_DOCS.md)
 
 # Lokaya_API — Free Fire Player Info (v2.2.0)
 
